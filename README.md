@@ -127,20 +127,87 @@ node tools/context/scan-schema-usage.mjs     # only if you configured a schema a
 
 Output lands in `docs/context/_generated/`. Nothing runs these automatically.
 
-**2. Run the sweep.** In Claude Code, ask it to run the Workflow tool against
-`tools/context/sweep.workflow.js`, passing the contents of
-`compass.domains.json` as `args`. For N domains this spawns roughly 2N agents,
-so start with three or four and look at what comes back before doing the rest.
+**2. Run the sweep.** See *Using it with Claude Code* below.
 
 **3. Read the sweep check.** The final agent reports on thin files,
 contradictions between files, and domains still uncovered. That report is where
 the next round of work comes from.
 
-Single domains, any time:
+## Using it with Claude Code
+
+The skills live in `.claude/skills/`, which Claude Code reads from your
+repository root. Start a session in the repo:
+
+```bash
+cd your-repo
+claude
+```
+
+Both skills are then available as slash commands. Confirm with `/map-domain` —
+if it does not autocomplete, the directory is in the wrong place. It must be
+`.claude/skills/map-domain/SKILL.md` relative to the repo root, not nested in a
+subfolder.
+
+### One domain at a time
 
 ```
 /map-domain orders
 ```
+
+Claude reads the skill, follows the procedure, and writes `docs/context/orders.md`.
+This is a single agent doing the analyst's job, with no critic behind it. Good
+for starting out, for a domain you know well enough to check by eye, and for
+refreshing one file after the code moves.
+
+### The full sweep
+
+The sweep is multi-agent and Claude Code will not start one unless you ask for
+it, so say so plainly:
+
+> Run a workflow using `tools/context/sweep.workflow.js`, and pass the contents
+> of `compass.domains.json` as args.
+
+Claude reads your domains file, calls the Workflow tool with that script and
+those domains, and fans out. Watch it with `/workflows`.
+
+For N domains it spawns roughly 2N agents plus a few, so **start with three or
+four domains rather than thirty**. Look at what comes back, adjust your `about`
+and `hints`, then run the rest. The agent count and the token cost both scale
+linearly, and a bad prompt replicated across thirty domains is thirty files to
+redo.
+
+To regenerate a subset later, pass only those domains.
+
+### Pointing everyday work at the results
+
+Add this to your `CLAUDE.md` so agents read the files rather than ignoring them:
+
+```markdown
+## Domain context
+
+`docs/context/<domain>.md` holds one short, cited note per domain: what it owns,
+its non-obvious rules, and what else must change when you change it. Read the
+relevant one BEFORE grepping, before opening files.
+
+They are indexes, not specifications. Each is capped at 35 lines, so it names
+the places a rule lives and tells you to read them. Read the compass, then read
+the code. Never edit on the strength of a compass file alone.
+
+A compass file is stale the moment you prove it wrong. Fix it in the same commit
+as the code, or run `/map-domain <domain>` to rebuild it.
+```
+
+Without that, the files exist and nothing reads them.
+
+### Keeping them honest
+
+```
+/audit-domain
+```
+
+Re-derives claims whose cited code has changed since the claim was written, and
+resolves disagreements between files. Nothing schedules it; run it when the
+validator starts reporting stale claims.
 
 ## What you get
 
@@ -272,6 +339,3 @@ Worth being honest about these before you adopt it.
 - **Nothing is scheduled.** The detectors, the sweep and the audit are all
   manual. The staleness queue refills on its own; noticing it does not.
 
-## Licence
-
-MIT. See `LICENSE`.
