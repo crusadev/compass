@@ -49,6 +49,35 @@ cutting one, which surfaces duplication automatically.
 
 Requires Node 18+, git, and [Claude Code](https://claude.com/claude-code).
 
+### Ask Claude Code to do it
+
+The install needs judgment about your repository, so this is the better path.
+Open Claude Code in your repo and paste:
+
+> Set up https://github.com/crusadev/compass in this repository.
+>
+> Clone it to a temp directory, read its README, then copy `tools/context/` and
+> the two skills in `.claude/skills/` into this repo. Do not copy its README,
+> examples or git history.
+>
+> Then write a `compass.config.json` for THIS codebase rather than copying the
+> example: look at the actual layout and work out which extensions are source,
+> which paths are vendored or generated, and which paths must be excluded from
+> usage counting - the schema definitions and any generated type dump, because
+> those list every symbol whether or not anything reads it. If there is a
+> Drizzle schema, set the adapter and `schemaDirs`; otherwise leave `schema`
+> null.
+>
+> Run `node tools/context/scan-coverage.mjs` and show me the result. Then
+> propose a domain list from it and explain your reasoning, but do not write
+> `compass.domains.json` until I have agreed to the domains.
+
+The last line matters. Domain boundaries are the one decision the tool cannot
+make for you, and a sweep built on a bad list produces files you will throw
+away.
+
+### Or do it by hand
+
 Copy two directories into your repository:
 
 ```bash
