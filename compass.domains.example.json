@@ -1,0 +1,21 @@
+[
+  {
+    "key": "orders",
+    "about": "a customer order from checkout through fulfilment, refund and settlement",
+    "hints": "src/orders/, src/db/schema/orders.ts, the order status enum, the checkout route"
+  },
+  {
+    "key": "billing",
+    "about": "subscriptions, invoices and everything that decides what a customer is charged",
+    "hints": "src/billing/, the Stripe webhook handler, src/db/schema/subscriptions.ts",
+    "owns": true,
+    "ownsFact": "Proration and currency rounding rules are owned by docs/context/billing.md."
+  },
+  {
+    "key": "auth",
+    "about": "who a request is, which role they hold, and every place that is decided",
+    "hints": "src/middleware/auth.ts, the session handling, the route guards, the role enum",
+    "owns": true,
+    "ownsFact": "Roles, sessions and the route guards are owned by docs/context/auth.md."
+  }
+]

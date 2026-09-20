@@ -1,0 +1,12 @@
+{
+  "contextDir": "docs/context",
+  "generatedDir": "docs/context/_generated",
+  "lineCap": 35,
+  "source": [".ts", ".tsx", ".js", ".jsx"],
+  "exclude": ["node_modules/", "dist/", "build/", "coverage/"],
+  "excludeFromUsage": ["src/db/schema/", "src/generated/"],
+  "generated": ["docs/context/_generated/"],
+  "coverageMinLines": 400,
+  "schema": null,
+  "schemaDirs": []
+}
