@@ -68,6 +68,10 @@ Open Claude Code in your repo and paste:
 > Drizzle schema, set the adapter and `schemaDirs`; otherwise leave `schema`
 > null.
 >
+> Set `coverageMinLines` to suit this codebase: the default of 400 assumes large
+> files, and on a small repo it reports nothing, which reads as full coverage
+> rather than a wrong threshold.
+>
 > Run `node tools/context/scan-coverage.mjs` and show me the result. Then
 > propose a domain list from it and explain your reasoning, but do not write
 > `compass.domains.json` until I have agreed to the domains.
@@ -101,8 +105,12 @@ Edit `compass.config.json`. The fields that matter most:
   dump lists every column whether or not anything reads it, so counting hits
   there proves nothing.
 - **`source`** — which extensions count as code.
-- **`schema`** — leave `null` unless you use Drizzle. Only that adapter ships
-  here; see *Adapting it* below.
+- **`schema`** — leave `null` unless you use Drizzle, and check the contents
+  rather than the folder name. A directory called `db/schema/` full of plain
+  object literals is not Drizzle, and the adapter will parse nothing.
+  Set `schemaDirs` alongside it.
+- **`coverageMinLines`** — 400 suits a large codebase. On a smaller one it
+  reports nothing, which looks like full coverage and is not.
 
 Check it runs:
 

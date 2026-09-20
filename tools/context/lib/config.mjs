@@ -64,6 +64,9 @@ const DEFAULTS = {
    * you use Drizzle.
    */
   schema: null,
+
+  /** Where the schema adapter looks. Only read when `schema` is set. */
+  schemaDirs: [],
 }
 
 let cached = null

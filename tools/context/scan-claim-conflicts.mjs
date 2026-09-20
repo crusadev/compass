@@ -10,7 +10,7 @@
 //
 //   node tools/context/scan-claim-conflicts.mjs [--json]
 
-import { readdirSync, existsSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readdirSync, existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { ROOT, read } from './lib/repo.mjs'
 import { config } from './lib/config.mjs'
@@ -167,5 +167,6 @@ for (const c of conflicts) {
   say()
 }
 
+mkdirSync(path.dirname(path.join(ROOT, OUT)), { recursive: true })
 writeFileSync(path.join(ROOT, OUT), `${lines.join('\n')}\n`)
 console.error(`${OUT}: ${anchors.size} anchored lines, ${conflicts.length} conflicting pair(s)`)

@@ -8,7 +8,7 @@
 //
 //   node tools/context/scan-coverage.mjs [--json]
 
-import { readdirSync, existsSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readdirSync, existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { ROOT, read, tracked, packageOf } from './lib/repo.mjs'
 import { config } from './lib/config.mjs'
@@ -124,7 +124,19 @@ say()
 table(invisible)
 say()
 
+mkdirSync(path.dirname(path.join(ROOT, OUT)), { recursive: true })
 writeFileSync(path.join(ROOT, OUT), `${lines.join('\n')}\n`)
+if (rows.length === 0) {
+  const biggest = tracked(config().source)
+    .filter((f) => !EXCLUDED.test(f))
+    .reduce((n, f) => Math.max(n, read(f).split('\n').length), 0)
+  console.error(
+    `No source file reaches coverageMinLines (${MIN_LINES}). The largest is ${biggest} lines.\n` +
+      'An empty report here means the threshold is wrong for this codebase, not that\n' +
+      'everything is covered. Lower coverageMinLines in compass.config.json.',
+  )
+}
+
 console.error(
   `${OUT}: ${rows.length} files over ${MIN_LINES} lines, ` +
     `${shared.length} cross-cutting, ${invisible.length} uncited`

@@ -3,7 +3,7 @@
 //
 //   node tools/context/scan-schema-usage.mjs [--json]
 
-import { writeFileSync } from 'node:fs'
+import { mkdirSync,  writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { ROOT, consumerFiles, read } from './lib/repo.mjs'
 import { config } from './lib/config.mjs'
@@ -200,6 +200,7 @@ else {
 }
 say()
 
+mkdirSync(path.dirname(path.join(ROOT, OUT)), { recursive: true })
 writeFileSync(path.join(ROOT, OUT), `${lines.join('\n')}\n`)
 console.error(
   `${OUT}: ${deadTables.length} dead tables, ${nonAppTables.length} test/script-only tables, ` +
